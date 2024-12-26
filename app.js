@@ -73,8 +73,21 @@ async function main() {
         .configureLogging(signalR.LogLevel.Information)
         .build();
 
-    connection.on("ReceiveMessage", (message) => {
+    connection.on("ReceiveMessage", async (message) => {
         console.log('Received message:', JSON.stringify(message, null, 2));
+        
+        if (message.$type === 'chatsSessionsUpdated') {
+            for (const session of message.sessions) {
+                for (const character of session.characters) {
+                    try {
+                        await checkAndCreateToday(character.id);
+                        console.log(`Daily entry check/creation completed for character ${character.name} (${character.id})`);
+                    } catch (dbError) {
+                        console.error(`Error during daily entry check/creation for character ${character.name}:`, dbError);
+                    }
+                }
+            }
+        }
     });
 
     try {
@@ -94,15 +107,6 @@ async function main() {
             }
         });
         console.log('Authentication sent');
-
-        // Check and create daily entry for test characterId
-        const testCharacterId = '501d33a2-3ffa-0a18-4170-2f55a96a7f5b';
-        try {
-            await checkAndCreateToday(testCharacterId);
-            console.log('Daily entry check/creation completed successfully');
-        } catch (dbError) {
-            console.error('Error during daily entry check/creation:', dbError);
-        }
 
     } catch (error) {
         console.error('Erreur:', error);
