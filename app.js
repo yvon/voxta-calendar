@@ -23,6 +23,7 @@ const db = initializeDatabase();
 
 function checkAndCreateToday(characterId) {
     const today = new Date().toISOString().split('T')[0];
+    console.log(`Checking daily entry for character ${characterId} on ${today}`);
     
     return new Promise((resolve, reject) => {
         db.get('SELECT * FROM days WHERE characterId = ? AND day = ?', [characterId, today], (err, row) => {
@@ -32,6 +33,7 @@ function checkAndCreateToday(characterId) {
             }
             
             if (!row) {
+                console.log(`No entry found for ${today}, creating new entry with default events`);
                 // Si le jour n'existe pas, on le crée avec des événements par défaut
                 const defaultEvents = JSON.stringify([
                     { type: "piscine", startTime: "10:00" },
@@ -45,9 +47,11 @@ function checkAndCreateToday(characterId) {
                             reject(err);
                             return;
                         }
+                        console.log(`Successfully created new entry for ${today} with default events`);
                         resolve();
                     });
             } else {
+                console.log(`Entry already exists for ${today}, skipping creation`);
                 resolve();
             }
         });
@@ -69,12 +73,12 @@ async function main() {
         .build();
 
     connection.on("ReceiveMessage", (message) => {
-        console.log('Message reçu:', JSON.stringify(message, null, 2));
+        console.log('Received message:', JSON.stringify(message, null, 2));
     });
 
     try {
         await connection.start();
-        console.log('Connecté au WebSocket');
+        console.log('Connected to WebSocket');
 
         // Authentification
         await connection.invoke('SendMessage', {
@@ -88,15 +92,15 @@ async function main() {
                 acceptedAudioContentTypes: ["audio/x-wav", "audio/mpeg"]
             }
         });
-        console.log('Authentification envoyée');
+        console.log('Authentication sent');
 
         // Vérifier et créer l'entrée du jour pour un characterId de test
         const testCharacterId = '501d33a2-3ffa-0a18-4170-2f55a96a7f5b';
         try {
             await checkAndCreateToday(testCharacterId);
-            console.log('Entrée du jour vérifiée/créée avec succès');
+            console.log('Daily entry check/creation completed successfully');
         } catch (dbError) {
-            console.error('Erreur lors de la vérification/création du jour:', dbError);
+            console.error('Error during daily entry check/creation:', dbError);
         }
 
     } catch (error) {
