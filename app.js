@@ -51,7 +51,8 @@ function checkAndCreateToday(characterId) {
                         resolve();
                     });
             } else {
-                console.log(`Entry already exists for ${today}, skipping creation`);
+                console.log(`Entry already exists for ${today}, current events:`);
+                console.log(JSON.parse(row.events));
                 resolve();
             }
         });
