@@ -3,8 +3,9 @@ require('dotenv').config();
 
 async function main() {
     const baseUrl = process.env.WS_BASE_URL;
+    const credentials = Buffer.from(`${process.env.WS_USERNAME}:${process.env.WS_PASSWORD}`).toString('base64');
     const headers = {
-        'Authorization': 'Basic ' + Buffer.from('username:password').toString('base64')
+        'Authorization': 'Basic ' + credentials
     };
 
     const connection = new signalR.HubConnectionBuilder()
