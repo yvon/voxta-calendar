@@ -34,7 +34,7 @@ function checkAndCreateToday(characterId) {
             
             if (!row) {
                 console.log(`No entry found for ${today}, creating new entry with default events`);
-                // Si le jour n'existe pas, on le crée avec des événements par défaut
+                // If no entry exists for today, create one with default events
                 const defaultEvents = JSON.stringify([
                     { type: "piscine", startTime: "10:00" },
                     { type: "petanque", startTime: "16:00" }
@@ -80,7 +80,7 @@ async function main() {
         await connection.start();
         console.log('Connected to WebSocket');
 
-        // Authentification
+        // Authentication
         await connection.invoke('SendMessage', {
             $type: 'authenticate',
             client: "SimpleClient",
@@ -94,7 +94,7 @@ async function main() {
         });
         console.log('Authentication sent');
 
-        // Vérifier et créer l'entrée du jour pour un characterId de test
+        // Check and create daily entry for test characterId
         const testCharacterId = '501d33a2-3ffa-0a18-4170-2f55a96a7f5b';
         try {
             await checkAndCreateToday(testCharacterId);
