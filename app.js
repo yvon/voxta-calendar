@@ -26,10 +26,10 @@ async function main() {
             $type: 'authenticate',
             client: "SimpleClient",
             clientVersion: "1.0",
-            scope: ["role:app"],
+            scope: ["role:provider"],
             capabilities: {
-                audioInput: "WebSocketStream",
-                audioOutput: "Url",
+                audioInput: "None",
+                audioOutput: "None",
                 acceptedAudioContentTypes: ["audio/x-wav", "audio/mpeg"]
             }
         });
