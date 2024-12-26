@@ -1,7 +1,8 @@
 const signalR = require('@microsoft/signalr');
+require('dotenv').config();
 
 async function main() {
-    const baseUrl = 'YOUR_WS_BASE_URL';
+    const baseUrl = process.env.WS_BASE_URL;
     const headers = {
         'Authorization': 'Basic ' + Buffer.from('username:password').toString('base64')
     };
