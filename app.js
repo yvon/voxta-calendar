@@ -15,7 +15,7 @@ async function main() {
         .build();
 
     connection.on("ReceiveMessage", (message) => {
-        console.log('Message reçu:', message);
+        console.log('Message reçu:', JSON.stringify(message, null, 2));
     });
 
     try {
