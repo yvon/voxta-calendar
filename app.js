@@ -1,5 +1,25 @@
 const signalR = require('@microsoft/signalr');
+const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
 require('dotenv').config();
+
+// Initialize database
+function initializeDatabase() {
+    const db = new sqlite3.Database('database.db');
+    const schema = fs.readFileSync('schema.sql', 'utf8');
+    
+    db.exec(schema, (err) => {
+        if (err) {
+            console.error('Error initializing database:', err);
+        } else {
+            console.log('Database schema initialized');
+        }
+    });
+    
+    return db;
+}
+
+const db = initializeDatabase();
 
 // {"arguments":[{"$type":"updateContext","sessionId":"501d33a2-3ffa-0a18-4170-2f55a96a7f5b","contextKey":"Inspector","contexts":[{"text":"Test"}]}],"target":"SendMessage","type":1}
 //
