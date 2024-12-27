@@ -33,7 +33,25 @@ async function generateText(systemPrompt, userPrompt, maxTokens) {
         maxTokens: maxTokens
     };
 
-    return makeApiRequest('/api/text/generate', 'POST', requestBody);
+    const response = await makeApiRequest('/api/text/generate', 'POST', requestBody);
+    
+    // Handle streamed response chunks
+    if (Array.isArray(response)) {
+        let combinedText = '';
+        for (const chunk of response) {
+            if (chunk.data && chunk.data.text) {
+                combinedText += chunk.data.text;
+            }
+        }
+        try {
+            return JSON.parse(combinedText);
+        } catch (error) {
+            console.error('Failed to parse combined JSON:', combinedText);
+            throw new Error('Invalid JSON format in response');
+        }
+    }
+    
+    return response;
 }
 
 module.exports = {

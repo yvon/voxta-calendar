@@ -79,15 +79,20 @@ async function checkAndCreateToday(characterId) {
             }
             
             if (!row) {
-                console.log(`No entry found for ${today}, creating new entry with default events`);
-                // If no entry exists for today, create one with default events
-                const defaultEvents = JSON.stringify([
-                    { type: "piscine", startTime: "10:00" },
-                    { type: "petanque", startTime: "16:00" }
-                ]);
+                console.log(`No entry found for ${today}, generating new schedule`);
+                
+                // Generate schedule using the text generation API
+                const schedule = await generateText(
+                    "You are a helpful assistant that generates daily schedules.",
+                    buildDayGenerationPrompt(characterCard),
+                    500
+                );
+                
+                console.log('Generated schedule:', schedule);
+                const scheduleJson = JSON.stringify(schedule);
                 
                 db.run('INSERT INTO days (characterId, day, events) VALUES (?, ?, ?)',
-                    [characterId, today, defaultEvents],
+                    [characterId, today, scheduleJson],
                     (err) => {
                         if (err) {
                             reject(err);
