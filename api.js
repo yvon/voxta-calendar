@@ -35,16 +35,67 @@ async function makeApiRequest(endpoint, method = 'GET', data = null) {
     }
 }
 
-function generateText(systemPrompt, userPrompt, maxTokens) {
+async function handleStreamingResponse(response) {
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let responseData = '';
+
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunkText = decoder.decode(value);
+        const lines = chunkText.split('\n');
+
+        for (let line of lines) {
+            if (line.startsWith('data:')) {
+                const jsonString = line.substring(6);
+                try {
+                    const dataObject = JSON.parse(jsonString);
+                    if (dataObject.text) {
+                        responseData += dataObject.text;
+                        // Vous pouvez aussi émettre un événement ici si nécessaire
+                    }
+                } catch (error) {
+                    console.error('Failed to parse streamed JSON:', error);
+                    console.error('Response:', jsonString);
+                }
+            }
+        }
+    }
+    return responseData;
+}
+
+async function generateText(systemPrompt, userPrompt, maxTokens) {
+    const baseUrl = process.env.WS_BASE_URL;
     const requestBody = {
         prompt: [
             { role: "System", value: systemPrompt },
             { role: "User", value: userPrompt }
         ],
-        maxTokens: maxTokens
+        maxTokens: maxTokens,
+        stream: true // Activer le streaming
     };
 
-    return makeApiRequest('/api/text/generate', 'POST', requestBody);
+    try {
+        const response = await fetch(`${baseUrl}/api/text/generate`, {
+            method: 'POST',
+            headers: {
+                ...getAuthHeaders(),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await handleStreamingResponse(response);
+    } catch (error) {
+        console.error('Error in generateText:', error.message);
+        throw error;
+    }
 }
 
 module.exports = {
