@@ -169,7 +169,6 @@ EXAMPLE FORMAT:
 }
 
 module.exports = {
-    sendUpdateContext,
     checkAndCreateToday,
     fetchCharacter,
     buildDayGenerationPrompt,
