@@ -5,6 +5,27 @@ const { handleMessage } = require('./messageHandler');
 // {"arguments":[{"$type":"updateContext","sessionId":"501d33a2-3ffa-0a18-4170-2f55a96a7f5b","contextKey":"Inspector","contexts":[{"text":"Test"}]}],"target":"SendMessage","type":1}
 //
 
+async function sendUpdateContext(connection, sessionId, contextKey, text) {
+    try {
+        await connection.invoke('SendMessage', {
+            arguments: [{
+                $type: "updateContext",
+                sessionId: sessionId,
+                contextKey: contextKey,
+                contexts: [{
+                    text: text
+                }]
+            }],
+            target: "SendMessage",
+            type: 1
+        });
+        console.log('Update context message sent successfully');
+    } catch (error) {
+        console.error('Error sending update context message:', error);
+        throw error;
+    }
+}
+
 async function connect(maxRetries = 3) {
     const baseUrl = process.env.WS_BASE_URL;
     const credentials = Buffer.from(`${process.env.WS_USERNAME}:${process.env.WS_PASSWORD}`).toString('base64');
@@ -52,7 +73,15 @@ async function connect(maxRetries = 3) {
 
 async function main() {
     try {
-        await connect();
+        const connection = await connect();
+        
+        // Exemple d'utilisation de sendUpdateContext
+        // await sendUpdateContext(
+        //     connection,
+        //     "501d33a2-3ffa-0a18-4170-2f55a96a7f5b",
+        //     "Inspector",
+        //     "Test"
+        // );
     } catch (error) {
         console.error('Failed to establish connection after all retries:', error);
         process.exit(1);
