@@ -1,7 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
-const axios = require('axios');
-require('dotenv').config();
+const { makeApiRequest } = require('./api');
 
 // Initialize database
 function initializeDatabase() {
@@ -40,22 +39,15 @@ function buildCharacterCard(characterData) {
 }
 
 async function fetchCharacter(characterId) {
-    const baseUrl = process.env.WS_BASE_URL;
-    const credentials = Buffer.from(`${process.env.WS_USERNAME}:${process.env.WS_PASSWORD}`).toString('base64');
-    
     try {
-        const response = await axios.get(`${baseUrl}/api/characters/${characterId}`, {
-            headers: {
-                'Authorization': `Basic ${credentials}`
-            }
-        });
-        console.log('Character data:', response.data);
+        const characterData = await makeApiRequest(`/api/characters/${characterId}`);
+        console.log('Character data:', characterData);
         
         // Build and log the character card
-        const characterCard = buildCharacterCard(response.data);
+        const characterCard = buildCharacterCard(characterData);
         console.log('Character card:\n', characterCard);
         
-        return response.data;
+        return characterData;
     } catch (error) {
         console.error('Error fetching character:', error.message);
         throw error;
