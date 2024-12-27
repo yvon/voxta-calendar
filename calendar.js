@@ -94,7 +94,26 @@ async function checkAndCreateToday(characterId) {
     });
 }
 
+function buildDayGenerationPrompt(characterCard) {
+    return `Based on the following character card, generate a daily schedule of events in JSON format.
+${characterCard}
+
+Generate a schedule of events for this character's day. Each event should have:
+- type: the activity name
+- startTime: in "HH:MM" 24-hour format
+
+Return ONLY a JSON array of events like this example:
+[
+    {"type": "meditation", "startTime": "07:00"},
+    {"type": "breakfast", "startTime": "08:00"},
+    {"type": "work", "startTime": "09:00"}
+]
+
+The schedule should match the character's personality and interests. Generate 4-6 events spread throughout the day.`;
+}
+
 module.exports = {
     checkAndCreateToday,
-    fetchCharacter
+    fetchCharacter,
+    buildDayGenerationPrompt
 };
