@@ -1,5 +1,6 @@
 const { checkAndCreateToday } = require('./calendar');
 const { formatDaySchedule } = require('./formatDay');
+const { sendUpdateContext } = require('./app');
 
 
 async function handleMessage(message) {
@@ -33,6 +34,14 @@ async function handleMessage(message) {
                     const formattedDay = formatDaySchedule(character.name, schedule);
                     console.log(`Daily entry check/creation completed for character ${character.name} (${character.id})`);
                     console.log(formattedDay);
+                    
+                    // Send the formatted schedule to the context
+                    await sendUpdateContext(
+                        global.connection,
+                        session.sessionId,
+                        'Calendar',
+                        formattedDay
+                    );
                 } catch (dbError) {
                     console.error(`Error during daily entry check/creation for character ${character.name}:`, dbError);
                 }

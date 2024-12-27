@@ -73,7 +73,7 @@ async function connect(maxRetries = 3) {
 
 async function main() {
     try {
-        const connection = await connect();
+        global.connection = await connect();
         
         // Exemple d'utilisation de sendUpdateContext
         // await sendUpdateContext(
