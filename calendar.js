@@ -39,7 +39,8 @@ function buildCharacterCard(characterData) {
 
 async function fetchCharacter(characterId) {
     try {
-        const characterData = await makeApiRequest(`/api/characters/${characterId}`);
+        const response = await makeApiRequest(`/api/characters/${characterId}`);
+        const characterData = await response.json();
         console.log('Character data:', characterData);
         
         // Build and log the character card
@@ -51,11 +52,11 @@ async function fetchCharacter(characterId) {
         console.log('Day generation prompt:\n', prompt);
         
         // Generate schedule using the text generation API
-        const generatedSchedule = await generateText(
-            "You are a helpful assistant that generates daily schedules.",
-            prompt,
-            500
-        );
+        const generatedSchedule = await generateText([
+            { role: "System", value: "You are a helpful assistant that generates daily schedules." },
+            { role: "User", value: prompt },
+            { role: "Assistant", value: '[' }], 500);
+
         console.log('Generated schedule:', generatedSchedule);
         
         return characterData;
@@ -82,27 +83,6 @@ async function checkAndCreateToday(characterId) {
                 
                 if (!row) {
                     console.log(`No entry found for ${today}, generating new schedule`);
-                    
-                    // Generate schedule using the text generation API
-                    const schedule = await generateText(
-                        "You are a helpful assistant that generates daily schedules.",
-                        buildDayGenerationPrompt(characterCard),
-                        500
-                    );
-                    
-                    console.log('Generated schedule:', schedule);
-                    const scheduleJson = JSON.stringify(schedule);
-                    
-                    db.run('INSERT INTO days (characterId, day, events) VALUES (?, ?, ?)',
-                        [characterId, today, scheduleJson],
-                        (err) => {
-                            if (err) {
-                                reject(err);
-                                return;
-                            }
-                            console.log(`Successfully created new entry for ${today} with default events`);
-                            resolve();
-                        });
                 } else {
                     console.log(`Entry already exists for ${today}, current events:`);
                     console.log(JSON.parse(row.events));

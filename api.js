@@ -28,7 +28,7 @@ async function makeApiRequest(endpoint, method = 'GET', data = null) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        return await response.json();
+        return response
     } catch (error) {
         console.error(`Error making API request to ${endpoint}:`, error.message);
         throw error;
@@ -54,7 +54,6 @@ async function handleStreamingResponse(response) {
                     const dataObject = JSON.parse(jsonString);
                     if (dataObject.text) {
                         responseData += dataObject.text;
-                        // Vous pouvez aussi émettre un événement ici si nécessaire
                     }
                 } catch (error) {
                     console.error('Failed to parse streamed JSON:', error);
@@ -66,18 +65,13 @@ async function handleStreamingResponse(response) {
     return responseData;
 }
 
-async function generateText(systemPrompt, userPrompt, maxTokens) {
-    const requestBody = {
-        prompt: [
-            { role: "System", value: systemPrompt },
-            { role: "User", value: userPrompt }
-        ],
-        maxTokens: maxTokens
-    };
+async function generateText(prompt, maxTokens) {
+    const requestBody = { prompt, maxTokens };
 
     try {
         const response = await makeApiRequest('/api/text/generate', 'POST', requestBody);
         
+        console.log(response.headers.get('content-type'));
         if (response.headers && response.headers.get('content-type')?.includes('text/event-stream')) {
             return await handleStreamingResponse(response);
         }
