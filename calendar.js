@@ -121,9 +121,8 @@ async function getPreviousEvents(characterId, daysToLookBack = 7) {
 }
 
 function formatPreviousEventsSection(previousEvents) {
-    return previousEvents.length > 0 
-        ? `\nPrevious schedules for this character:\n${JSON.stringify(previousEvents, null, 2)}`
-        : '\nNo previous schedules available.';
+    if (previousEvents.length === 0) return 'No previous schedules available.';
+    return JSON.stringify(previousEvents, null, 2);
 }
 
 async function buildDayGenerationPrompt(characterCard, characterId) {
@@ -133,9 +132,7 @@ async function buildDayGenerationPrompt(characterCard, characterId) {
     return `You are tasked with generating a realistic daily schedule for a character.
 
 CHARACTER PROFILE:
-\`\`\`
 ${characterCard}
-\`\`\`
 
 REQUIREMENTS:
 1. Generate 4-6 events for today
@@ -144,7 +141,8 @@ REQUIREMENTS:
 4. Schedule should follow a logical daily progression
 5. Times should be between 06:00 and 23:00
 
-PREVIOUS SCHEDULES TO AVOID REPETITION:${previousEventsStr}
+PREVIOUS SCHEDULES TO AVOID REPETITION:
+${previousEventsStr}
 
 FORMAT SPECIFICATIONS:
 - Return ONLY a JSON array
