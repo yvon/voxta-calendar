@@ -102,7 +102,7 @@ function buildDayGenerationPrompt(characterCard) {
     return `Based on the following character card, generate a daily schedule of events in JSON format.
 
 ```
-${characterCard}
+${characterCard.split('\n').map(line => '    ' + line).join('\n')}
 ```
 
 Generate a schedule of events for this character's day. Each event should have:
