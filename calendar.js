@@ -1,5 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
+const axios = require('axios');
+require('dotenv').config();
 
 // Initialize database
 function initializeDatabase() {
@@ -19,7 +21,27 @@ function initializeDatabase() {
 
 const db = initializeDatabase();
 
-function checkAndCreateToday(characterId) {
+async function fetchCharacter(characterId) {
+    const baseUrl = process.env.WS_BASE_URL;
+    const credentials = Buffer.from(`${process.env.WS_USERNAME}:${process.env.WS_PASSWORD}`).toString('base64');
+    
+    try {
+        const response = await axios.get(`${baseUrl}/api/characters/${characterId}`, {
+            headers: {
+                'Authorization': `Basic ${credentials}`
+            }
+        });
+        console.log('Character data:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching character:', error.message);
+        throw error;
+    }
+}
+
+async function checkAndCreateToday(characterId) {
+    // Fetch character data first
+    await fetchCharacter(characterId);
     const today = new Date().toISOString().split('T')[0];
     console.log(`Checking daily entry for character ${characterId} on ${today}`);
     
@@ -58,5 +80,6 @@ function checkAndCreateToday(characterId) {
 }
 
 module.exports = {
-    checkAndCreateToday
+    checkAndCreateToday,
+    fetchCharacter
 };
