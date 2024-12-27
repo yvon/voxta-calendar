@@ -43,22 +43,6 @@ async function fetchCharacter(characterId) {
         const characterData = await response.json();
         console.log('Character data:', characterData);
         
-        // Build and log the character card
-        const characterCard = buildCharacterCard(characterData);
-        console.log('Character card:\n', characterCard);
-        
-        // Generate and log the day generation prompt
-        const prompt = await buildDayGenerationPrompt(characterCard, characterId);
-        console.log('Day generation prompt:\n', prompt);
-        
-        // Generate schedule using the text generation API
-        const generatedSchedule = await generateText([
-            { role: "System", value: "You are a helpful assistant that generates daily schedules." },
-            { role: "User", value: prompt },
-            { role: "Assistant", value: '[' }], 500);
-
-        console.log('Generated schedule:', generatedSchedule);
-        
         return characterData;
     } catch (error) {
         console.error('Error fetching character:', error.message);
@@ -66,11 +50,24 @@ async function fetchCharacter(characterId) {
     }
 }
 
-async function checkAndCreateToday(characterId) {
-    // Fetch character data first
+async function generateSchedule(characterId) {
     const characterData = await fetchCharacter(characterId);
     const characterCard = buildCharacterCard(characterData);
     const prompt = await buildDayGenerationPrompt(characterCard, characterId);
+
+    console.log('Day generation prompt:\n', prompt);
+        
+    const generatedSchedule = await generateText([
+        { role: "System", value: "You are a helpful assistant that generates daily schedules." },
+        { role: "User", value: prompt },
+        { role: "Assistant", value: '[' }], 500);
+
+    console.log('Generated schedule:', generatedSchedule);
+    return generatedSchedule;
+}
+
+async function checkAndCreateToday(characterId) {
+    // Fetch character data first
     const today = new Date().toISOString().split('T')[0];
     console.log(`Checking daily entry for character ${characterId} on ${today}`);
     
@@ -84,6 +81,8 @@ async function checkAndCreateToday(characterId) {
                 
                 if (!row) {
                     console.log(`No entry found for ${today}, generating new schedule`);
+                    const generatedSchedule = await generateSchedule(characterId);
+                    //AI! insert ce schedule dans la db
                 } else {
                     console.log(`Entry already exists for ${today}, current events:`);
                     console.log(JSON.parse(row.events));
