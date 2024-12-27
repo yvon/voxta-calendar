@@ -21,21 +21,21 @@ function initializeDatabase() {
 const db = initializeDatabase();
 
 function buildCharacterCard(characterData) {
-    let markdown = `# Character Card\n\n`;
+    let content = '';
     
     if (characterData.personality) {
-        markdown += `## Personality\n${characterData.personality}\n\n`;
+        content += `Personality: ${characterData.personality}\n`;
     }
     
     if (characterData.description) {
-        markdown += `## Description\n${characterData.description}\n\n`;
+        content += `Description: ${characterData.description}\n`;
     }
     
     if (characterData.profile) {
-        markdown += `## Profile\n${characterData.profile}\n\n`;
+        content += `${characterData.profile}\n`;
     }
     
-    return markdown;
+    return content;
 }
 
 async function fetchCharacter(characterId) {
@@ -100,7 +100,10 @@ async function checkAndCreateToday(characterId) {
 
 function buildDayGenerationPrompt(characterCard) {
     return `Based on the following character card, generate a daily schedule of events in JSON format.
+
+```
 ${characterCard}
+```
 
 Generate a schedule of events for this character's day. Each event should have:
 - type: the activity name
