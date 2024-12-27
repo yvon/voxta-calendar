@@ -91,17 +91,12 @@ async function checkAndCreateToday(characterId) {
                                 return;
                             }
                             console.log(`New schedule inserted for ${today}`);
-                            resolve({
-                                characterId,
-                                day: today,
-                                events: JSON.parse(generatedSchedule)
-                            });
+                            resolve(JSON.parse(generatedSchedule));
                         }
                     );
                 } else {
-                    console.log(`Entry already exists for ${today}, current events:`);
-                    console.log(JSON.parse(row.events));
-                    resolve();
+                    console.log(`Entry already exists for ${today}`);
+                    resolve(JSON.parse(row.events));
                 }
             } catch (error) {
                 reject(error);
