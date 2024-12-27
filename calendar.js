@@ -35,7 +35,7 @@ function buildCharacterCard(characterData) {
         content += `${characterData.profile}\n`;
     }
     
-    return content;
+    return content.trim();
 }
 
 async function fetchCharacter(characterId) {
