@@ -1,7 +1,8 @@
 const { checkAndCreateToday } = require('./calendar');
 const { formatDaySchedule } = require('./formatDay');
-const { sendUpdateContext } = require('./app');
+const EventEmitter = require('events');
 
+const messageEvents = new EventEmitter();
 
 async function handleMessage(message) {
     console.log('Received message:', JSON.stringify(message, null, 2));
@@ -35,13 +36,11 @@ async function handleMessage(message) {
                     console.log(`Daily entry check/creation completed for character ${character.name} (${character.id})`);
                     console.log(formattedDay);
                     
-                    // Send the formatted schedule to the context
-                    await sendUpdateContext(
-                        global.connection,
-                        session.sessionId,
-                        'Calendar',
+                    // Emit event with schedule data
+                    messageEvents.emit('scheduleGenerated', {
+                        sessionId: session.sessionId,
                         formattedDay
-                    );
+                    });
                 } catch (dbError) {
                     console.error(`Error during daily entry check/creation for character ${character.name}:`, dbError);
                 }
@@ -51,5 +50,6 @@ async function handleMessage(message) {
 }
 
 module.exports = {
-    handleMessage
+    handleMessage,
+    messageEvents
 };

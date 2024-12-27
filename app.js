@@ -1,6 +1,6 @@
 const signalR = require('@microsoft/signalr');
 require('dotenv').config();
-const { handleMessage } = require('./messageHandler');
+const { handleMessage, messageEvents } = require('./messageHandler');
 
 // {"arguments":[{"$type":"updateContext","sessionId":"501d33a2-3ffa-0a18-4170-2f55a96a7f5b","contextKey":"Inspector","contexts":[{"text":"Test"}]}],"target":"SendMessage","type":1}
 //
@@ -73,15 +73,21 @@ async function connect(maxRetries = 3) {
 
 async function main() {
     try {
-        global.connection = await connect();
+        const connection = await connect();
         
-        // Exemple d'utilisation de sendUpdateContext
-        // await sendUpdateContext(
-        //     connection,
-        //     "501d33a2-3ffa-0a18-4170-2f55a96a7f5b",
-        //     "Inspector",
-        //     "Test"
-        // );
+        // Listen for schedule generation events
+        messageEvents.on('scheduleGenerated', async ({ sessionId, formattedDay }) => {
+            try {
+                await sendUpdateContext(
+                    connection,
+                    sessionId,
+                    'Calendar',
+                    formattedDay
+                );
+            } catch (error) {
+                console.error('Error sending context update:', error);
+            }
+        });
     } catch (error) {
         console.error('Failed to establish connection after all retries:', error);
         process.exit(1);
