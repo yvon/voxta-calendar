@@ -8,16 +8,12 @@ const { handleMessage, messageEvents } = require('./messageHandler');
 async function sendUpdateContext(connection, sessionId, contextKey, text) {
     try {
         await connection.invoke('SendMessage', {
-            arguments: [{
-                $type: "updateContext",
-                sessionId: sessionId,
-                contextKey: contextKey,
-                contexts: [{
-                    text: text
-                }]
-            }],
-            target: "SendMessage",
-            type: 1
+            $type: "updateContext",
+            sessionId: sessionId,
+            contextKey: contextKey,
+            contexts: [{
+                text: text
+            }]
         });
         console.log('Update context message sent successfully');
     } catch (error) {
