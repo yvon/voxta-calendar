@@ -67,44 +67,49 @@ async function fetchCharacter(characterId) {
 
 async function checkAndCreateToday(characterId) {
     // Fetch character data first
-    await fetchCharacter(characterId);
+    const characterData = await fetchCharacter(characterId);
+    const characterCard = buildCharacterCard(characterData);
     const today = new Date().toISOString().split('T')[0];
     console.log(`Checking daily entry for character ${characterId} on ${today}`);
     
     return new Promise((resolve, reject) => {
-        db.get('SELECT * FROM days WHERE characterId = ? AND day = ?', [characterId, today], (err, row) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            
-            if (!row) {
-                console.log(`No entry found for ${today}, generating new schedule`);
+        db.get('SELECT * FROM days WHERE characterId = ? AND day = ?', [characterId, today], async (err, row) => {
+            try {
+                if (err) {
+                    reject(err);
+                    return;
+                }
                 
-                // Generate schedule using the text generation API
-                const schedule = await generateText(
-                    "You are a helpful assistant that generates daily schedules.",
-                    buildDayGenerationPrompt(characterCard),
-                    500
-                );
-                
-                console.log('Generated schedule:', schedule);
-                const scheduleJson = JSON.stringify(schedule);
-                
-                db.run('INSERT INTO days (characterId, day, events) VALUES (?, ?, ?)',
-                    [characterId, today, scheduleJson],
-                    (err) => {
-                        if (err) {
-                            reject(err);
-                            return;
-                        }
-                        console.log(`Successfully created new entry for ${today} with default events`);
-                        resolve();
-                    });
-            } else {
-                console.log(`Entry already exists for ${today}, current events:`);
-                console.log(JSON.parse(row.events));
-                resolve();
+                if (!row) {
+                    console.log(`No entry found for ${today}, generating new schedule`);
+                    
+                    // Generate schedule using the text generation API
+                    const schedule = await generateText(
+                        "You are a helpful assistant that generates daily schedules.",
+                        buildDayGenerationPrompt(characterCard),
+                        500
+                    );
+                    
+                    console.log('Generated schedule:', schedule);
+                    const scheduleJson = JSON.stringify(schedule);
+                    
+                    db.run('INSERT INTO days (characterId, day, events) VALUES (?, ?, ?)',
+                        [characterId, today, scheduleJson],
+                        (err) => {
+                            if (err) {
+                                reject(err);
+                                return;
+                            }
+                            console.log(`Successfully created new entry for ${today} with default events`);
+                            resolve();
+                        });
+                } else {
+                    console.log(`Entry already exists for ${today}, current events:`);
+                    console.log(JSON.parse(row.events));
+                    resolve();
+                }
+            } catch (error) {
+                reject(error);
             }
         });
     });
