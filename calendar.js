@@ -47,6 +47,10 @@ async function fetchCharacter(characterId) {
         const characterCard = buildCharacterCard(characterData);
         console.log('Character card:\n', characterCard);
         
+        // Generate and log the day generation prompt
+        const prompt = buildDayGenerationPrompt(characterCard);
+        console.log('Day generation prompt:\n', prompt);
+        
         return characterData;
     } catch (error) {
         console.error('Error fetching character:', error.message);
