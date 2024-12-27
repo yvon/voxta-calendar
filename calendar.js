@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
-const { makeApiRequest } = require('./api');
+const { makeApiRequest, generateText } = require('./api');
 
 function initializeDatabase() {
     const db = new sqlite3.Database('database.db');
@@ -49,6 +49,14 @@ async function fetchCharacter(characterId) {
         // Generate and log the day generation prompt
         const prompt = buildDayGenerationPrompt(characterCard);
         console.log('Day generation prompt:\n', prompt);
+        
+        // Generate schedule using the text generation API
+        const generatedSchedule = await generateText(
+            "You are a helpful assistant that generates daily schedules.",
+            prompt,
+            500
+        );
+        console.log('Generated schedule:', generatedSchedule);
         
         return characterData;
     } catch (error) {
