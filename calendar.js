@@ -21,6 +21,24 @@ function initializeDatabase() {
 
 const db = initializeDatabase();
 
+function buildCharacterCard(characterData) {
+    let markdown = `# Character Card\n\n`;
+    
+    if (characterData.personality) {
+        markdown += `## Personality\n${characterData.personality}\n\n`;
+    }
+    
+    if (characterData.description) {
+        markdown += `## Description\n${characterData.description}\n\n`;
+    }
+    
+    if (characterData.profile) {
+        markdown += `## Profile\n${characterData.profile}\n\n`;
+    }
+    
+    return markdown;
+}
+
 async function fetchCharacter(characterId) {
     const baseUrl = process.env.WS_BASE_URL;
     const credentials = Buffer.from(`${process.env.WS_USERNAME}:${process.env.WS_PASSWORD}`).toString('base64');
@@ -32,6 +50,11 @@ async function fetchCharacter(characterId) {
             }
         });
         console.log('Character data:', response.data);
+        
+        // Build and log the character card
+        const characterCard = buildCharacterCard(response.data);
+        console.log('Character card:\n', characterCard);
+        
         return response.data;
     } catch (error) {
         console.error('Error fetching character:', error.message);
