@@ -1,6 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
 const { makeApiRequest, generateText } = require('./api');
+const { formatDaySchedule } = require('./formatDay');
 
 function initializeDatabase() {
     const db = new sqlite3.Database('database.db');
@@ -90,8 +91,12 @@ async function checkAndCreateToday(characterId) {
                                 reject(err);
                                 return;
                             }
+                            const schedule = JSON.parse(generatedSchedule);
+                            const characterData = await fetchCharacter(characterId);
+                            const formattedDay = formatDaySchedule(characterData.name, schedule);
                             console.log(`New schedule inserted for ${today}`);
-                            resolve(JSON.parse(generatedSchedule));
+                            console.log(formattedDay);
+                            resolve(schedule);
                         }
                     );
                 } else {
