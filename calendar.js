@@ -2,7 +2,6 @@ const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
 const { makeApiRequest } = require('./api');
 
-// Initialize database
 function initializeDatabase() {
     const db = new sqlite3.Database('database.db');
     const schema = fs.readFileSync('schema.sql', 'utf8');
@@ -101,9 +100,9 @@ async function checkAndCreateToday(characterId) {
 function buildDayGenerationPrompt(characterCard) {
     return `Based on the following character card, generate a daily schedule of events in JSON format.
 
-```
-${characterCard.split('\n').map(line => '    ' + line).join('\n')}
-```
+\`\`\`
+${characterCard}
+\`\`\`
 
 Generate a schedule of events for this character's day. Each event should have:
 - type: the activity name
