@@ -82,7 +82,22 @@ async function checkAndCreateToday(characterId) {
                 if (!row) {
                     console.log(`No entry found for ${today}, generating new schedule`);
                     const generatedSchedule = await generateSchedule(characterId);
-                    //AI! insert ce schedule dans la db
+                    
+                    db.run('INSERT INTO days (characterId, day, events) VALUES (?, ?, ?)',
+                        [characterId, today, generatedSchedule],
+                        function(err) {
+                            if (err) {
+                                reject(err);
+                                return;
+                            }
+                            console.log(`New schedule inserted for ${today}`);
+                            resolve({
+                                characterId,
+                                day: today,
+                                events: JSON.parse(generatedSchedule)
+                            });
+                        }
+                    );
                 } else {
                     console.log(`Entry already exists for ${today}, current events:`);
                     console.log(JSON.parse(row.events));
