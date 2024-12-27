@@ -91,12 +91,8 @@ async function checkAndCreateToday(characterId) {
                                 reject(err);
                                 return;
                             }
-                            const schedule = JSON.parse(generatedSchedule);
-                            const characterData = await fetchCharacter(characterId);
-                            const formattedDay = formatDaySchedule(characterData.name, schedule);
                             console.log(`New schedule inserted for ${today}`);
-                            console.log(formattedDay);
-                            resolve(schedule);
+                            resolve(JSON.parse(generatedSchedule));
                         }
                     );
                 } else {

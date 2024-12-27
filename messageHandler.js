@@ -1,4 +1,5 @@
 const { checkAndCreateToday } = require('./calendar');
+const { formatDaySchedule } = require('./formatDay');
 
 
 async function handleMessage(message) {
@@ -28,8 +29,10 @@ async function handleMessage(message) {
         for (const session of message.sessions) {
             for (const character of session.characters) {
                 try {
-                    await checkAndCreateToday(character.id);
+                    const schedule = await checkAndCreateToday(character.id);
+                    const formattedDay = formatDaySchedule(character.name, schedule);
                     console.log(`Daily entry check/creation completed for character ${character.name} (${character.id})`);
+                    console.log(formattedDay);
                 } catch (dbError) {
                     console.error(`Error during daily entry check/creation for character ${character.name}:`, dbError);
                 }
