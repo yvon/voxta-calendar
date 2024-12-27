@@ -1,9 +1,9 @@
 function formatDaySchedule(characterName, schedule) {
     const formattedEvents = schedule
-        .map(event => `- ${event.startTime}: ${event.type}`)
-        .join('\n');
+        .map(event => `${event.startTime}: ${event.type}`)
+        .join(', ');
 
-    return `${characterName}'s day:\n${formattedEvents}`;
+    return `${characterName}'s day: ${formattedEvents}`;
 }
 
 module.exports = {
