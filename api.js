@@ -8,11 +8,14 @@ function getAuthHeaders() {
     };
 }
 
-async function makeApiRequest(endpoint) {
+async function makeApiRequest(endpoint, method = 'GET', data = null) {
     const baseUrl = process.env.WS_BASE_URL;
     try {
-        const response = await axios.get(`${baseUrl}${endpoint}`, {
-            headers: getAuthHeaders()
+        const response = await axios({
+            method,
+            url: `${baseUrl}${endpoint}`,
+            headers: getAuthHeaders(),
+            data
         });
         return response.data;
     } catch (error) {
@@ -21,6 +24,19 @@ async function makeApiRequest(endpoint) {
     }
 }
 
+async function generateText(systemPrompt, userPrompt, maxTokens) {
+    const requestBody = {
+        prompt: [
+            { role: "System", value: systemPrompt },
+            { role: "User", value: userPrompt }
+        ],
+        maxTokens: maxTokens
+    };
+
+    return makeApiRequest('/api/text/generate', 'POST', requestBody);
+}
+
 module.exports = {
-    makeApiRequest
+    makeApiRequest,
+    generateText
 };
