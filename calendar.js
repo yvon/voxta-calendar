@@ -48,7 +48,7 @@ async function fetchCharacter(characterId) {
         console.log('Character card:\n', characterCard);
         
         // Generate and log the day generation prompt
-        const prompt = buildDayGenerationPrompt(characterCard);
+        const prompt = await buildDayGenerationPrompt(characterCard, characterId);
         console.log('Day generation prompt:\n', prompt);
         
         // Generate schedule using the text generation API
@@ -70,6 +70,7 @@ async function checkAndCreateToday(characterId) {
     // Fetch character data first
     const characterData = await fetchCharacter(characterId);
     const characterCard = buildCharacterCard(characterData);
+    const prompt = await buildDayGenerationPrompt(characterCard, characterId);
     const today = new Date().toISOString().split('T')[0];
     console.log(`Checking daily entry for character ${characterId} on ${today}`);
     
@@ -95,8 +96,38 @@ async function checkAndCreateToday(characterId) {
     });
 }
 
-function buildDayGenerationPrompt(characterCard) {
+async function getPreviousEvents(characterId, daysToLookBack = 7) {
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT day, events 
+            FROM days 
+            WHERE characterId = ? 
+            ORDER BY day DESC 
+            LIMIT ?
+        `;
+        
+        db.all(query, [characterId, daysToLookBack], (err, rows) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            const events = rows.map(row => ({
+                day: row.day,
+                events: JSON.parse(row.events)
+            }));
+            resolve(events);
+        });
+    });
+}
+
+async function buildDayGenerationPrompt(characterCard, characterId) {
+    const previousEvents = await getPreviousEvents(characterId);
+    const previousEventsStr = previousEvents.length > 0 
+        ? `\nPrevious schedules for this character:\n${JSON.stringify(previousEvents, null, 2)}`
+        : '\nNo previous schedules available.';
+
     return `Based on the following character card, generate a daily schedule of events in JSON format.
+    Important: Generate different activities from the previous days shown below.
 
 \`\`\`
 ${characterCard}
