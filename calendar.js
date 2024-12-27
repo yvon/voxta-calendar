@@ -120,11 +120,15 @@ async function getPreviousEvents(characterId, daysToLookBack = 7) {
     });
 }
 
-async function buildDayGenerationPrompt(characterCard, characterId) {
-    const previousEvents = await getPreviousEvents(characterId);
-    const previousEventsStr = previousEvents.length > 0 
+function formatPreviousEventsSection(previousEvents) {
+    return previousEvents.length > 0 
         ? `\nPrevious schedules for this character:\n${JSON.stringify(previousEvents, null, 2)}`
         : '\nNo previous schedules available.';
+}
+
+async function buildDayGenerationPrompt(characterCard, characterId) {
+    const previousEvents = await getPreviousEvents(characterId);
+    const previousEventsStr = formatPreviousEventsSection(previousEvents);
 
     return `You are tasked with generating a realistic daily schedule for a character.
 
@@ -159,5 +163,6 @@ EXAMPLE FORMAT:
 module.exports = {
     checkAndCreateToday,
     fetchCharacter,
-    buildDayGenerationPrompt
+    buildDayGenerationPrompt,
+    formatPreviousEventsSection
 };
