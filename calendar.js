@@ -144,7 +144,7 @@ Return ONLY a JSON array of events like this example:
     {"type": "work", "startTime": "09:00"}
 ]
 
-The schedule should match the character's personality and interests. Generate 4-6 events spread throughout the day.`;
+The schedule should match the character's personality and interests. Generate 4-6 events spread throughout the day.${previousEventsStr}`;
 }
 
 module.exports = {
