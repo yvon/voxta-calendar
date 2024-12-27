@@ -97,14 +97,10 @@ async function main() {
         // Authentication
         await connection.invoke('SendMessage', {
             $type: 'authenticate',
-            client: "SimpleClient",
+            client: "Calendar",
             clientVersion: "1.0",
             scope: ["role:provider"],
-            capabilities: {
-                audioInput: "None",
-                audioOutput: "None",
-                acceptedAudioContentTypes: ["audio/x-wav", "audio/mpeg"]
-            }
+            capabilities: {}
         });
         console.log('Authentication sent');
 
