@@ -37,6 +37,7 @@ async function generateText(systemPrompt, userPrompt, maxTokens) {
     
     // Handle streamed response chunks
     if (Array.isArray(response)) {
+        console.log('Received streamed response:', response);
         let combinedText = '';
         for (const chunk of response) {
             if (chunk.data && chunk.data.text) {
