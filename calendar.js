@@ -126,25 +126,34 @@ async function buildDayGenerationPrompt(characterCard, characterId) {
         ? `\nPrevious schedules for this character:\n${JSON.stringify(previousEvents, null, 2)}`
         : '\nNo previous schedules available.';
 
-    return `Based on the following character card, generate a daily schedule of events in JSON format.
-    Important: Generate different activities from the previous days shown below.
+    return `You are tasked with generating a realistic daily schedule for a character.
 
+CHARACTER PROFILE:
 \`\`\`
 ${characterCard}
 \`\`\`
 
-Generate a schedule of events for this character's day. Each event should have:
-- type: the activity name
-- startTime: in "HH:MM" 24-hour format
+REQUIREMENTS:
+1. Generate 4-6 events for today
+2. Events must be different from previous days' activities
+3. Events should match the character's personality and interests
+4. Schedule should follow a logical daily progression
+5. Times should be between 06:00 and 23:00
 
-Return ONLY a JSON array of events like this example:
+PREVIOUS SCHEDULES TO AVOID REPETITION:${previousEventsStr}
+
+FORMAT SPECIFICATIONS:
+- Return ONLY a JSON array
+- Each event must have:
+  * "type": descriptive activity name
+  * "startTime": 24-hour format "HH:MM"
+
+EXAMPLE FORMAT:
 [
-    {"type": "meditation", "startTime": "07:00"},
-    {"type": "breakfast", "startTime": "08:00"},
-    {"type": "work", "startTime": "09:00"}
-]
-
-The schedule should match the character's personality and interests. Generate 4-6 events spread throughout the day.${previousEventsStr}`;
+    {"type": "morning yoga", "startTime": "07:00"},
+    {"type": "breakfast at café", "startTime": "08:30"},
+    {"type": "writing session", "startTime": "10:00"}
+]`;
 }
 
 module.exports = {
