@@ -2,9 +2,6 @@ const signalR = require('@microsoft/signalr');
 const config = require('./config');
 const { handleMessage, messageEvents } = require('./messageHandler');
 
-// {"arguments":[{"$type":"updateContext","sessionId":"501d33a2-3ffa-0a18-4170-2f55a96a7f5b","contextKey":"Inspector","contexts":[{"text":"Test"}]}],"target":"SendMessage","type":1}
-//
-
 async function sendUpdateContext(connection, sessionId, contextKey, text) {
     try {
         await connection.invoke('SendMessage', {
@@ -71,7 +68,6 @@ async function main() {
     try {
         const connection = await connect();
         
-        // Listen for schedule generation events
         messageEvents.on('scheduleGenerated', async ({ sessionId, formattedDay }) => {
             try {
                 await sendUpdateContext(
