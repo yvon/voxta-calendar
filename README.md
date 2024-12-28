@@ -1,30 +1,30 @@
 # Voxta Calendar Provider
 
-Ce provider permet de générer des calendriers quotidiens pour les compagnons dans [Voxta](https://github.com/VoxTA/VoxTA). Il crée des activités uniques par jour qui sont ensuite injectées dans le contexte de la conversation, permettant ainsi à l'IA d'y faire référence naturellement.
+This provider generates daily calendars for companions in [Voxta](https://github.com/VoxTA/VoxTA). It creates unique daily activities that are injected into the conversation context, allowing the AI to naturally reference them.
 
-*Note : Ce projet n'est pas officiellement associé au projet Voxta.*
+*Note: This project is not officially associated with the Voxta project.*
 
-## Fonctionnalités
+## Features
 
-- Génération de plannings quotidiens personnalisés
-- Injection automatique dans le contexte de conversation
-- Prise en compte de l'historique des activités
+- Generation of personalized daily schedules
+- Automatic injection into conversation context
+- Takes activity history into account
 
 ## Installation
 
-Assurez-vous d'avoir Node.js installé sur votre système, puis :
+Make sure you have Node.js installed on your system, then:
 
 ```bash
 npm install
 ```
 
-## Utilisation
+## Usage
 
-1. Assurez-vous que votre instance Voxta est en cours d'exécution
-2. Lancez le provider :
+1. Ensure your Voxta instance is up and running
+2. Launch the provider:
 ```bash
 node app.js
 ```
-3. Initiez une conversation avec votre compagnon dans Voxta
+3. Start a conversation with your companion in Voxta
 
-Le planning généré sera automatiquement intégré au contexte de la conversation.
+The generated schedule will be automatically integrated into the conversation context.
