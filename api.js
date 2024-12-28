@@ -88,5 +88,6 @@ async function generateText(prompt, maxTokens) {
 
 module.exports = {
     makeApiRequest,
-    generateText
+    generateText,
+    getAuthHeaders
 };
