@@ -1,10 +1,10 @@
 require('dotenv').config();
 
 const config = {
-    ws: {
-        baseUrl: process.env.WS_BASE_URL || 'http://localhost:5384',
-        username: process.env.WS_USERNAME,
-        password: process.env.WS_PASSWORD
+    voxta: {
+        baseUrl: process.env.VOXTA_BASE_URL || 'http://localhost:5384',
+        username: process.env.VOXTA_USERNAME,
+        password: process.env.VOXTA_PASSWORD
     }
 };
 
