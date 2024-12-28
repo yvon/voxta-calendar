@@ -1,8 +1,8 @@
 const config = require('./config');
 
 function getAuthHeaders() {
-    if (config.ws.username && config.ws.password) {
-        const credentials = Buffer.from(`${config.ws.username}:${config.ws.password}`).toString('base64');
+    if (config.voxta.username && config.voxta.password) {
+        const credentials = Buffer.from(`${config.voxta.username}:${config.voxta.password}`).toString('base64');
         return {
             'Authorization': `Basic ${credentials}`
         };
@@ -11,7 +11,7 @@ function getAuthHeaders() {
 }
 
 async function makeApiRequest(endpoint, method = 'GET', data = null) {
-    const baseUrl = config.ws.baseUrl;
+    const baseUrl = config.voxta.baseUrl;
     try {
         const options = {
             method,
