@@ -1,8 +1,8 @@
-require('dotenv').config();
+const config = require('./config');
 
 function getAuthHeaders() {
-    if (process.env.WS_USERNAME && process.env.WS_PASSWORD) {
-        const credentials = Buffer.from(`${process.env.WS_USERNAME}:${process.env.WS_PASSWORD}`).toString('base64');
+    if (config.ws.username && config.ws.password) {
+        const credentials = Buffer.from(`${config.ws.username}:${config.ws.password}`).toString('base64');
         return {
             'Authorization': `Basic ${credentials}`
         };
@@ -11,7 +11,7 @@ function getAuthHeaders() {
 }
 
 async function makeApiRequest(endpoint, method = 'GET', data = null) {
-    const baseUrl = process.env.WS_BASE_URL;
+    const baseUrl = config.ws.baseUrl;
     try {
         const options = {
             method,
