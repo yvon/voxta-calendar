@@ -1,5 +1,5 @@
 const signalR = require('@microsoft/signalr');
-require('dotenv').config();
+const config = require('./config');
 const { handleMessage, messageEvents } = require('./messageHandler');
 
 // {"arguments":[{"$type":"updateContext","sessionId":"501d33a2-3ffa-0a18-4170-2f55a96a7f5b","contextKey":"Inspector","contexts":[{"text":"Test"}]}],"target":"SendMessage","type":1}
@@ -23,8 +23,8 @@ async function sendUpdateContext(connection, sessionId, contextKey, text) {
 }
 
 async function connect(maxRetries = 3) {
-    const baseUrl = process.env.WS_BASE_URL;
-    const credentials = Buffer.from(`${process.env.WS_USERNAME}:${process.env.WS_PASSWORD}`).toString('base64');
+    const baseUrl = config.ws.baseUrl;
+    const credentials = Buffer.from(`${config.ws.username}:${config.ws.password}`).toString('base64');
     const headers = { 'Authorization': 'Basic ' + credentials };
 
     const connection = new signalR.HubConnectionBuilder()
