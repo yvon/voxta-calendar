@@ -1,6 +1,7 @@
 const signalR = require('@microsoft/signalr');
 const config = require('./config');
 const { handleMessage, messageEvents } = require('./messageHandler');
+const { getAuthHeaders } = require('./api');
 
 async function sendUpdateContext(connection, sessionId, contextKey, text) {
     try {
@@ -21,8 +22,7 @@ async function sendUpdateContext(connection, sessionId, contextKey, text) {
 
 async function connect(maxRetries = 3) {
     const baseUrl = config.voxta.baseUrl;
-    const credentials = Buffer.from(`${config.voxta.username}:${config.voxta.password}`).toString('base64');
-    const headers = { 'Authorization': 'Basic ' + credentials };
+    const headers = getAuthHeaders();
 
     const connection = new signalR.HubConnectionBuilder()
         .withUrl(`${baseUrl}/hub`, { headers })
