@@ -20,8 +20,8 @@ async function sendUpdateContext(connection, sessionId, contextKey, text) {
 }
 
 async function connect(maxRetries = 3) {
-    const baseUrl = config.ws.baseUrl;
-    const credentials = Buffer.from(`${config.ws.username}:${config.ws.password}`).toString('base64');
+    const baseUrl = config.voxta.baseUrl;
+    const credentials = Buffer.from(`${config.voxta.username}:${config.voxta.password}`).toString('base64');
     const headers = { 'Authorization': 'Basic ' + credentials };
 
     const connection = new signalR.HubConnectionBuilder()
