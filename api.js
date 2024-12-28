@@ -1,10 +1,13 @@
 require('dotenv').config();
 
 function getAuthHeaders() {
-    const credentials = Buffer.from(`${process.env.WS_USERNAME}:${process.env.WS_PASSWORD}`).toString('base64');
-    return {
-        'Authorization': `Basic ${credentials}`
-    };
+    if (process.env.WS_USERNAME && process.env.WS_PASSWORD) {
+        const credentials = Buffer.from(`${process.env.WS_USERNAME}:${process.env.WS_PASSWORD}`).toString('base64');
+        return {
+            'Authorization': `Basic ${credentials}`
+        };
+    }
+    return {};
 }
 
 async function makeApiRequest(endpoint, method = 'GET', data = null) {
@@ -13,8 +16,8 @@ async function makeApiRequest(endpoint, method = 'GET', data = null) {
         const options = {
             method,
             headers: {
-                ...getAuthHeaders(),
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...getAuthHeaders()
             }
         };
         
