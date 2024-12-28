@@ -1,12 +1,13 @@
 # Voxta Calendar Provider
 
-This provider generates daily calendars for companions in [Voxta](https://github.com/VoxTA/VoxTA). It creates unique daily activities that are injected into the conversation context, allowing the AI to naturally reference them.
+This provider generates daily calendars for companions in [Voxta](https://github.com/VoxTA/VoxTA). It creates unique daily activities using Voxta's text generation module, taking into account each character's profile and personality. These activities are then injected into the conversation context, allowing the AI to naturally reference them.
 
 *Note: This project is not officially associated with the Voxta project.*
 
 ## Features
 
-- Generation of personalized daily schedules
+- Generation of personalized daily schedules using Voxta's text generation capabilities
+- Character-specific activities based on individual character profiles
 - Automatic injection into conversation context
 - Takes activity history into account
 
